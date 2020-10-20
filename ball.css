@@ -1,0 +1,16 @@
+ 
+.circle{
+	height: 50px;
+	width: 50px;
+	background: linear-gradient(#f00202 0%,#bd0404 10%,#7d0404 50%, #4a0202 100%);
+    border-radius: 50%;
+    display: flex;
+}
+.innercircle{
+	height: 45px;
+	width: 45px;
+	position: absolute;
+	background: linear-gradient(#f06060 0%,#a30505 60%,#4d0202 100%);
+    border-radius: 50%;
+    filter: blur(2px);
+}
