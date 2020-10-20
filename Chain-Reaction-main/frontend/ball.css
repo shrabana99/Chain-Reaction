@@ -1,0 +1,19 @@
+ 
+.circle{
+	height: 40px;
+	width: 40px; 
+    border-radius: 50%;
+    position: relative;
+}
+ 
+.innercircle{
+	height: 30px;
+	width: 30px;
+	position: relative;
+    border-radius: 50%;
+    filter: blur(2px);
+}
+
+/* For future use */
+/*background: linear-gradient(#f00202 0%,#bd0404 10%,#7d0404 50%, #4a0202 100%);*/
+/*background: linear-gradient(#f06060 0%,#a30505 60%,#4d0202 100%);*/
