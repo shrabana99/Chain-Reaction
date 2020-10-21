@@ -19,10 +19,66 @@ function drawBoard(){
 	for(let i = 0; i < N_SIZE; i++){
 		for(let j = 0; j < M_SIZE; j++){
 			let cell_id = i+' '+j;
-			document.getElementById(cell_id).innerHTML = "" + ballColor[i][j] + ":" + ballCount[i][j];
+			document.getElementById(cell_id).innerHTML = "";
+			var element = document.getElementById(cell_id);
+            createBall(element,ballColor[i][j],ballCount[i][j]);
 		}
 	}
 }
+
+// Ball making code -- Anirban
+
+function Ball(colr)
+{
+      let ball = document.createElement('div');
+      ball.setAttribute('class','circle');
+      let inner_ball = document.createElement('div');
+      inner_ball.setAttribute('class','innercirle');
+      ball.appendChild(inner_ball);
+      inner_ball.style.background = colr;
+      ball.style.background = colr;
+      ball.style.z_index = 4;
+      return ball;
+}
+function createBall(element,colr,cnt)
+{
+	  if(cnt == 1){
+	    let ball1 = Ball(colr);
+     	ball1.classList.add("shake-little","shake-constant");	
+        element.appendChild(ball1);	
+     }
+     else if(cnt == 2)
+     {
+     	let ball1 = Ball(colr);
+     	ball1.style.left = '10px';
+     	ball1.classList.add("shake-little","shake-constant");
+        element.appendChild(ball1);
+        let ball2 = Ball(colr);
+        ball2.style.left = '-10px';
+        ball2.classList.add("shake-little","shake-constant");
+        element.appendChild(ball2);  
+     }
+     else if(cnt == 3)
+     {
+        let ball1 = Ball(colr);
+     	ball1.style.left = '15px';
+     	ball1.style.top = '-5px';
+     	ball1.classList.add("shake-slow","shake-constant");
+        element.appendChild(ball1);
+        let ball2 = Ball(colr);
+        ball2.style.left = '10px';
+        ball2.classList.add("shake-slow","shake-constant");
+        element.appendChild(ball2);
+        let ball3 = Ball(colr);
+        ball3.z_index = 4;
+        ball3.style.top = '18px';
+        ball3.style.left = '-40px';
+        ball3.classList.add("shake-slow","shake-constant");
+        element.appendChild(ball3);  
+     }
+}
+///////////////////////////////////////////////////////////
+
 
 function validCell(x, y){
 	if(x >= 0 && y >= 0 && x < N_SIZE && y < M_SIZE) return true;
