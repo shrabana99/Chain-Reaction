@@ -2,24 +2,81 @@
 <html>
 <head>
 
-	<meta charset="UTF-8">
-	<title>Chain reaction</title>
-	<link rel="stylesheet" type="text/css" href="ball.css">
-    <link rel="stylesheet" type="text/css" href="shake.css">
+  <meta charset="UTF-8">
+  <title>Chain reaction</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 
+<style>
+#gameScreen {
+  display: none;
+}
+#winnerScreen {
+  display: none;
+}
+</style>
 </head>
 <body>
-<pre> Bug 1: 
-      We need to click many times on the ball to create a new ball, 
-      but when the cell is empty or if we click on the empty area inside a cell 
-      it works fine.</pre>
-<div id="chainReaction"></div>
-		<div align="left">Player
-			<span id='turn'> 0 </span>
-			<span id ='color'> red </span>
-		</div>
-			
-	<script type="text/javascript" src="script.js"> </script>
-	
+
+<div id="initialScreen">
+        <h1>Multiplayer Chain Reaction</h1>
+        <div class="">
+                <select class="" id="gamePlayerInput">
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
+                </select>
+            <button
+              type="submit"
+              class="btn btn-success"
+              id="newGameButton"
+            >
+              Create New Game
+            </button>
+        </div>
+
+        <div>OR</div>
+
+        <div class="form-group">
+            <input type="text" placeholder="Enter Game Code" id="gameCodeInput"/>
+            
+            <button
+              type="submit"
+              class="btn btn-success"
+              id="joinGameButton"
+            >
+              Join Game
+            </button>
+        </div>
+</div>
+
+
+<div id="gameScreen">
+    <div id = "playerPart"> Game stat
+        <div> Your game code is: <span id="gameCodeDisplay"></span>  </div>
+        <div> board for: <span id = 'gamePlayer'></span> players </div>
+        <div> Your turn : <span id="yourTurn">  </span> , Your color : <span id="yourColor">  </span> </div>
+        <div> Current turn : <span id="turn">   </span> , Current color : <span id="color">  </span> </div>
+        <div id = "playerOnline"> Players present in room </div>
+        <div id = "playerPlaying"> Player playing the game </div>
+    </div>
+
+    <div id = "gamePart"> Game board
+        <div id="chainReaction"></div>
+    </div>
+
+    <div id = "chatPart">Game chat
+        <div>
+            <input type="text" placeholder="Enter your message" id="message" >
+            <button type="submit" id="sendButton"> Send </button>
+        </div>
+        <div id = "chatBox" > </div>
+
+    </div>
+</div>
+      
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+  <script type="text/javascript" src="script.js"> </script>
+  
 </body>
 </html>
