@@ -1,10 +1,3 @@
-
-
-// This a Backup of client file 
-
-
-
-
 const N_SIZE = 9,
 M_SIZE = 6,
 alongX = 70, //distance between 2 lines along X axis
@@ -371,7 +364,12 @@ function newGame() // to create a new game..
 	   ballCount[i] = new Array(M_SIZE);
 	   unstableBalls[i] = new Array(M_SIZE);
      }
-     for(var i = 0;i < N_SIZE;i++)
+    
+    for(let i = 0; i < turns; i++){
+        validTurn[i] = true; validPlayer[i] = true;
+    }
+    
+    for(var i = 0;i < N_SIZE;i++)
      {
        for(var j = 0;j < M_SIZE;j++)
        {
@@ -410,11 +408,164 @@ function mouseClicked() // mouse click event handler
 // FRONTEND OF GRID ENDS HERE //////////////////////////////////////////////////////////////////////////////
 
 
+function updateTurn(){ // updates turn if some players disconnect or loose in the game
+  if(validTurn[currentTurn] == false){
+    for(let i = 1; i < turns; i++){
+      currentTurn = (currentTurn+1)%turns;
+      if(validTurn[currentTurn]) 
+        break;
+    }
+  }
+  document.getElementById('turn').innerHTML = currentTurn+1;
+  document.getElementById('color').innerHTML = colors[currentTurn];
+}
+function createStatTable(totalPlayer){ // creates stat portion of the game
+	validTurn = new Array(totalPlayer);
+    validPlayer = new Array(totalPlayer);
+
+    let onlineBoard = document.createElement('table'); // for player online for the game
+    onlineBoard.setAttribute("border", 1);
+    for(let i = 0; i < totalPlayer; i++){
+        let row = document.createElement('tr');
+        onlineBoard.appendChild(row);
+
+        let cell = document.createElement('td');
+        cell.setAttribute('align', 'center');
+        cell.innerHTML = "" + colors[i];
+        row.appendChild(cell);
+
+        cell = document.createElement('td');
+        cell.setAttribute('align', 'center');
+        cell.setAttribute('id', i + 'online');
+        cell.innerHTML = "available";
+        row.appendChild(cell);
+    }
+    document.getElementById('playerOnline').appendChild(onlineBoard);
+
+    let playingBoard = document.createElement('table'); // player actually playing the game
+    playingBoard.setAttribute("border", 1);
+    for(let i = 0; i < totalPlayer; i++){
+        let row = document.createElement('tr');
+        playingBoard.appendChild(row);
+
+        let cell = document.createElement('td');
+        cell.setAttribute('align', 'center');
+        cell.innerHTML = "" + colors[i];
+        row.appendChild(cell);
+
+        cell = document.createElement('td');
+        cell.setAttribute('align', 'center');
+        cell.setAttribute('id', i + 'playing');
+        cell.innerHTML = "playing";
+        row.appendChild(cell);
+    }
+    document.getElementById('playerPlaying').appendChild(playingBoard);
+}
 
 
+/*  client function starts  */
+// chat and (game+stat) functions
+const socket = io('http://localhost:3000');
 
+//  chat functions      //
+const chatBox = document.getElementById('chatBox');
+const message = document.getElementById('message');
+const sendButton = document.getElementById('sendButton');
 
+sendButton.addEventListener('click', function(){
+    let msg = message.value;
+    if(msg == "") return;
+    message.value = ""; //console.log();
+    socket.emit('sendMessage', msg);
+});
 
+socket.on('connected', function(player) {
+    addMessage(colors[player-1] + " connected");
+});
+socket.on('disconnected', function(player) {
+    addMessage(colors[player-1] + " disconnected");
+});
+socket.on('sentMsg', function(player, msg){
+    addMessage(colors[player-1] + " " + msg);
+});
+function addMessage(message) {
+    let msg = document.createElement('div');
+    msg.innerText = message;
+    chatBox.appendChild(msg);
+}
+// end of chat functions    //
 
+//  game+stat functions     //
+socket.on('gameStatus', handleGameStatus); // creates board for each player
+socket.on('lastJoined', handleAllJoined); // indicates if all joined or not for all player
+socket.on('gameRun', updateForAll); // updates board for all player
+socket.on('playerLeft', handlePlayerLeft); // updates player left for all player
+socket.on('unknownCode', handleUnknownCode); // triggers for unknown room
+socket.on('roomFull', handleRoomFull); // triggers for full room
 
+function handleGameStatus(gameCode, gameTurn, totalPlayer){ 
+    document.getElementById('gameCodeDisplay').innerHTML = gameCode;
+    document.getElementById('gamePlayer').innerHTML = totalPlayer;
 
+    urTurn = gameTurn-1;
+    document.getElementById('yourTurn').innerHTML = urTurn+1;
+    document.getElementById('yourColor').innerHTML = colors[urTurn];
+
+    visible();
+    createStatTable(totalPlayer);
+    newGame();
+}
+function handleAllJoined() { allJoined = true;  }
+
+function updateForAll(cell_id){ 
+    let x = Number(cell_id[0]);
+    let y = Number(cell_id[2]); 
+    ballCount[x][y]++;
+    moveCount++;
+    ballColor[x][y] = colors[currentTurn]; 
+    //popChain();
+    // update current players turn
+    currentTurn = (currentTurn + 1)%turns;
+    updateTurn(); // 
+}
+function handlePlayerLeft(x){ 
+    validPlayer[x-1] = false;
+    validTurn[x-1] = false;
+    updateTurn(); 
+}
+function handleUnknownCode() {
+    hide(); alert('Unknown Game Code');
+}
+function handleRoomFull() {
+    hide(); alert('This game is already in progress');
+}
+
+/*  helper function/hide+show screen   */ 
+const gameScreen = document.getElementById('gameScreen');
+const initialScreen = document.getElementById('initialScreen');
+const gameCodeInput = document.getElementById('gameCodeInput');
+
+function hide() {
+    initialScreen.style.display = "block";
+    gameScreen.style.display = "none";
+    gameCodeInput.value = "";
+}
+function visible(){
+    initialScreen.style.display = "none";
+    gameScreen.style.display = "block";
+}
+/*    end of client functions      */
+
+/*  button functions/initial screen */
+const newGameBtn = document.getElementById('newGameButton');
+const joinGameBtn = document.getElementById('joinGameButton');
+const gamePlayerInput = document.getElementById('gamePlayerInput');
+
+newGameBtn.addEventListener('click', function () { // creates new game room
+    let playerNo = gamePlayerInput.value;
+    socket.emit('newGame', playerNo);
+});
+joinGameBtn.addEventListener('click', function () { // join into a game room
+    const code = gameCodeInput.value;
+    socket.emit('joinGame', code);
+});
