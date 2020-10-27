@@ -1,25 +1,30 @@
 const io = require('socket.io')(3000)
 
 function makeid(length) {
-   let result           = '';
-   let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-   let charactersLength = characters.length;
-   for (let  i = 0; i < length; i++ ) {
-      result += characters.charAt(Math.floor(Math.random() * charactersLength));
-   }
-   return result;
+    let result           = '';
+    let characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let charactersLength = characters.length;
+    for (let  i = 0; i < length; i++ ) {
+       result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
 }
 
 let clientRooms = {}; // {client.id, roomName}
 let playersInRoom = {}; // {roomName, totalPlayer}
 let lastPlayer = {}; // {roomName, lastPlayer}
-//let validPlayer = {}; // {roomName, validplayer[]}
 
 io.on('connection', client => {
 
   client.on('newGame', handleNewGame);
   client.on('joinGame', handleJoinGame);
   client.on('curGame', handleCurrentGame);
+  client.on('sendMessage', handleMsg);
+
+  function handleMsg(msg){
+    let roomName = clientRooms[client.id];
+    io.in(roomName).emit('sentMsg', client.number, msg);
+  }
 
   function handleNewGame(totalPlayer) {
     let roomName = makeid(5); 
@@ -30,7 +35,6 @@ io.on('connection', client => {
     lastPlayer[roomName] = client.number;
 
     client.emit('gameStatus', roomName, client.number, totalPlayer);
-    //client.emit('playerPresent', client.number, true);
 
     client.join(roomName);
   }
@@ -63,19 +67,17 @@ io.on('connection', client => {
 
     client.number = lastPlayer[roomName] + 1;
 
-
     clientRooms[client.id] = roomName;
     lastPlayer[roomName] = client.number;
 
     client.emit('gameStatus', roomName, client.number, playersInRoom[roomName]);
-    //io.in(roomName).emit('playerPresent', client.number, true);
+    client.to(roomName).emit('connected', client.number);
 
     client.join(roomName);
 
-    if(lastPlayer[roomName] == playersInRoom[roomName]){
-      client.to(roomName).emit('lastJoined');
-      client.emit('lastJoined');
-    }
+    if(lastPlayer[roomName] == playersInRoom[roomName])
+        io.in(roomName).emit('lastJoined');
+    
   }
 
   function handleCurrentGame(cell_id) {
@@ -84,14 +86,29 @@ io.on('connection', client => {
   }
 
   client.on('disconnect', function() {
-      let roomName = clientRooms[client.id]; 
+      let roomName = clientRooms[client.id]; //console.log(roomName);
       
       if(roomName == undefined) 
         return;
 
+      let room = io.sockets.adapter.rooms[roomName];
+      let allUsers;
+      if (room) {
+        allUsers = room.sockets;
+      }
+      let numClients = 0; 
+      if (allUsers) {
+        numClients = Object.keys(allUsers).length;
+      } //console.log(numClients);
+
+      if (numClients === 0) { 
+        delete playersInRoom[roomName];
+        delete lastPlayer[roomName]; 
+      } 
       delete clientRooms[client.id];
 
       client.to(roomName).emit('playerLeft', client.number);
+      client.to(roomName).emit('disconnected', client.number);
   });
 
 });
