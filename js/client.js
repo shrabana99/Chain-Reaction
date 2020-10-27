@@ -543,7 +543,7 @@ function createGame(totalPlayer){
 
 /*  client function starts  */
 // chat and (game+stat) functions
-const socket = io('http://localhost:3000');
+const socket = io('https://chain-reaction-hub.herokuapp.com/');
 
 //  chat functions      //
 const chatBox = document.getElementById('chatBox');
