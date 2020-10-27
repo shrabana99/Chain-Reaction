@@ -1,4 +1,8 @@
-const io = require('socket.io')(3000)
+
+const express = require("express");
+const app = express();
+
+const io = require('socket.io')(process.env.PORT);
 
 function makeid(length) {
     let result           = '';
@@ -112,3 +116,5 @@ io.on('connection', client => {
   });
 
 });
+
+
