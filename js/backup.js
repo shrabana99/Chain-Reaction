@@ -13,20 +13,19 @@ burstSound, // pop sound
 currentTurn, // current player
 urTurn, // your turn as a player
 moveCount, // total no of moves
-turns, // no of players 
-availableTotalPlayer = 0, // total player online , always <= turns 
+turns, // no of player
+availableTotalPlayer = 0,
+playingTotalPlayer = 0,
 allJoined = false, // all player joined or not
 gameRunning, // game currently running or not
 validTurn, // array,  player in the game or not
 validPlayer, //array,  player connected in the room or not
-boxes = [], // useless
+boxes = [],
 ballCount, // 2d array to count the balls
 ballColor, // 2d array to store the Color of a cell
 pointerMap,//map cell index to canvas coordinate 
 unstableBalls, // this 3Darray will store ball objects and the directions they need to go when they are unstable
 checkUnstable; // 2d array true or false
-
-let winnerFound = false; // if winner found, will not let anyone click untill all players see who's the winner
 //////////////////////FRONTEND STARTS HERE/////////////////////////////////////////////////////////////
 
 // to setup the board .. 
@@ -469,15 +468,11 @@ function exclude(){
             if(ballColor[i][j] == colors[t]) count++;
           }
         }
-        if(count == 0) {
-        	validTurn[t] = false;
-        	updateTurn();
-        }
+        if(count == 0) validTurn[t] = false;
     }
 }
-
 function winner(){ 
-    if(moveCount <= turns || winnerFound) return;
+    if(moveCount <= turns) return;
 
     exclude();
     let playerCount = 0, playerTurn = 0;
@@ -486,7 +481,6 @@ function winner(){
             playerTurn = t, playerCount++;
     }
     if(playerCount == 1){
-    	winnerFound = true;
         tempAlert(colors[playerTurn],colors[playerTurn],2000);
     } 
 }
@@ -506,13 +500,20 @@ function tempAlert(msg,color,duration){
 	el.setAttribute("class","tempAlert");
     setTimeout(function(){
 		el.parentNode.removeChild(el);
+	    /*
 		initialiseGame(turns, false);
 
-		// all tabs have to draw the whole gameplay
-		allJoined = false; // console.log(allJoined);
-	  	socket.emit('endGame', availableTotalPlayer);
+		allJoined = false;// all tabs have to draw the whole gameplay
+	  	socket.emit('endGame', playingTotalPlayer+1, availableTotalPlayer);
 		
 		lockOnEndGame = false;
+	    */
+	    
+		allJoined = false;// all tabs have to draw the whole gameplay
+	  	socket.emit('endGame', playingTotalPlayer+1, availableTotalPlayer);
+		
+		lockOnEndGame = false;
+	        initialiseGame(turns, allJoined);
 
     },duration);
 	document.body.appendChild(el); 
@@ -603,8 +604,8 @@ function createGame(totalPlayer){
 
 /*  client function starts  */
 // chat and (game+stat) functions
-const socket =  io('https://chain-reaction-hub.herokuapp.com/');
-//  io('http://localhost:3000');
+const socket = io('https://chain-reaction-hub.herokuapp.com/');
+ //io('http://localhost:3000');
 
 //  chat functions      //
 const chatBox = document.getElementById('chatBox');
@@ -648,7 +649,9 @@ socket.on('gameRun', updateForAll); // updates board for all player
 socket.on('playerLeft', handlePlayerLeft); // updates player left for all player
 socket.on('unknownCode', handleUnknownCode); // triggers for unknown room
 socket.on('roomFull', handleRoomFull); // triggers for full room
-
+socket.on('gameEnd', function(x){ // handles end of game changes
+	playingTotalPlayer = x;
+});
 
 function handleGameStatus(gameCode, gameTurn, totalPlayer){ 
     document.getElementById('gameCodeDisplay').innerHTML = 'Code: '+gameCode;
@@ -662,9 +665,8 @@ function handleGameStatus(gameCode, gameTurn, totalPlayer){
     createGame(totalPlayer);
 }
 function handleAllJoined() { 
-	winnerFound = false;
-	allJoined = true; // console.log(allJoined);
-	// playingTotalPlayer = 0;
+	allJoined = true; 
+	playingTotalPlayer = 0;
 	// initialiseGame(turns, allJoined);
  }
 
