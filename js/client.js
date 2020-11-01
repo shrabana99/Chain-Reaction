@@ -36,14 +36,8 @@ function setup()
 	 let board = select('#board');
 	 c = createCanvas(435,555,WEBGL);
 	 c.parent(board);
-	 c.mouseClicked(mClicked);
-     //noLoop();  
+	 c.mouseClicked(mClicked);  
    pointerMapInit();
-   //start();
-}
-function start()
-{
-	requestAnimationFrame(redraw);
 }
 
 //this draw function is unique to p5.js .. It executes repeatedly.
@@ -586,9 +580,19 @@ function initialiseGame(totalPlayer, allJoinedOrNot){ // initialising
   moveCount = 0; 
   allJoined = allJoinedOrNot; // while creating room it will be false, after creating room it shall be true
   turns = totalPlayer; //2; // total no of players in the board
-  for(let i = 0; i < N_SIZE; i++)
-    for(let j = 0; j < M_SIZE; j++)
-      ballColor[i][j] = "", ballCount[i][j] = 0;
+   
+	  for(var i = 0;i < N_SIZE;i++)
+	  {
+		   for(var j = 0;j< M_SIZE;j++)
+		   {
+			  ballColor[i][j] = "";
+			  ballCount[i][j] = 0;
+			   for(var k = 0;k < 4;k++)
+			   {
+				   unstableBalls[i][j][k] = 0;
+			   }
+		   }
+	  }  
 
   for(let i = 0; i < totalPlayer; i++)
     validTurn[i] = validPlayer[i];
