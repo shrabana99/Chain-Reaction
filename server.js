@@ -1,4 +1,8 @@
 const io = require('socket.io')(3000)
+/*const express = require("express");
+const app = express();
+
+const io = require('socket.io')(process.env.PORT);*/
 
 function makeid(length) {
     let result           = '';
@@ -13,6 +17,7 @@ function makeid(length) {
 let clientRooms = {}; // {client.id, roomName}
 let playersInRoom = {}; // {roomName, totalPlayer}
 let lastPlayer = {}; // {roomName, lastPlayer}
+let playerEndingGame = {}; // {roomName, player showed game end div}
 
 io.on('connection', client => {
 
@@ -20,12 +25,16 @@ io.on('connection', client => {
   client.on('joinGame', handleJoinGame);
   client.on('curGame', handleCurrentGame);
   client.on('sendMessage', handleMsg);
-  client.on('endGame', function(x, y){ 
-      // console.log(x, y);
+  client.on('endGame', function(totalPlayerActive){ 
+      //console.log(totalPlayerActive);
+
       let roomName = clientRooms[client.id];
-      io.in(roomName).emit('gameEnd', x);
-      if(x == y){
+      playerEndingGame[roomName]++;
+
+      // io.in(roomName).emit('gameEnd', x);
+      if(playerEndingGame[roomName] == totalPlayerActive) { // console.log("XXXXXx");
           io.in(roomName).emit('lastJoined');
+          playerEndingGame[roomName] = 0;
       }
   });
 
@@ -41,6 +50,7 @@ io.on('connection', client => {
     clientRooms[client.id] = roomName;
     playersInRoom[roomName] = totalPlayer;
     lastPlayer[roomName] = client.number;
+    playerEndingGame[roomName] = 0;
 
     client.emit('gameStatus', roomName, client.number, totalPlayer);
 
@@ -111,6 +121,7 @@ io.on('connection', client => {
       if (numClients === 0) { 
         delete playersInRoom[roomName];
         delete lastPlayer[roomName]; 
+        delete playerEndingGame[roomName];
       } 
       delete clientRooms[client.id];
 
