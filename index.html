@@ -2,44 +2,94 @@
 <html>
 <head>
 	<meta charset="UTF-8">
-	<title>Chain Reaction</title>
+  <title>Chain Reaction</title>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="./css/style.css">
 	<link rel="stylesheet" type="text/css" href="./lib/materialize.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-
-<style>
-#gameScreen {
-  display: none;
-}
-#initialScreen {
-  background-color: white;
-}
-</style>
-
 </head>
 <body>
-	<nav class="nav-wrapper black center">
-		<a class="brand-logo center">Chain Reaction</a>
+	<nav class="nav-wrapper black">
+    <a class="brand-logo center">Chain Reaction</a>
+    <a class="brand-logo right" id ="gameCodeDisplay"></a>
+    <a class= "brand-logo left" id = 'gamePlayer'></a>
     </nav>
     <p></p>
 
+    <div class="bubble-wrap" id = "bubbleWrap">
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+      <div class="bubble"></div>
+    </div>   
+
 <div id="initialScreen">
-        <div class="row"> 
+        <div id = "createGame" class="center-align"> 
              
-            <input type="text" placeholder="Enter total player" id="gamePlayerInput"/>
-            <button
-              type="submit"
-              class="btn btn-success"
-              id="newGameButton"
-            >
+            <input type="text" autocomplete = "off" placeholder="Enter total player" id="gamePlayerInput" style="color:#FFFFFF;text-align: center;"/>
+            <button type="submit" class="btn btn-success" id="newGameButton">
               Create New Game
             </button>
-        </div>
-
-        <div>OR</div>
-
-        <div class="form-group">
-            <input type="text" placeholder="Enter Game Code" id="gameCodeInput"/>
+          </div>
+        <div class="form-group center-align">
+            <input type="text" autocomplete = "off" placeholder="Enter Game Code" id="gameCodeInput" style="color:#FFFFFF;text-align: center;"/>
             
             <button
               type="submit"
@@ -48,39 +98,46 @@
             >
               Join Game
             </button>
+            <p></p>
         </div>
 </div>
 
-<div id="gameScreen">
-	<div class = "row">
-		<div class = "col s12 m3 l3" id = "chat" >
-        	<p class = "center-align">Chat</p>
-			<div>
-	            <input type="text" placeholder="Enter your message" id="message" >
-	            <button type="submit" id="sendButton"> Send </button>
-	        </div>
-	        <div id = "chatBox" > Chat here</div>
+
+	<div class = "row" id = "gameScreen">
+		<div class = "col s12 m12 l3" id = "chat" >
+        	<p class = "center-align"><i class="small material-icons">chat</i></p>
+		   <div>
+	            <input type="text" placeholder="Enter your message" id="message" maxlength="25">
+	            <button type="submit" id="sendButton" class="waves-effect waves-light btn">
+                SEND
+                <i class="material-icons right">send</i>
+              </button>
+          </div>
+          <p></p>
+	        <div id = "chatBox" >
+
+          </div>
 
         </div>
 		
-		<div class = "col s12 m5 l5" id = "board"></div>
+		<div class = "col s12 m12 l5" id = "board"></div>
         
-        <div class = "col s12 m4 l4" id = "status">
-			<p class = "center-align">Status</p>
-	        <div> Your game code is: <span id="gameCodeDisplay"></span>  </div>
-	        <div> board for: <span id = 'gamePlayer'></span> players </div>
-	        <div> Your turn : <span id="yourTurn">  </span> , Your color : <span id="yourColor">  </span> </div>
-	        <div> Current turn : <span id="turn">   </span> , Current color : <span id="color">  </span> </div>
+        <div class = "col s12 m12 l4" id = "status">
+			<p class = "center-align"><i class="small material-icons">bubble_chart</i></p>
+          <div> Your color : <span id="yourColor">  </span> </div>
+          <p></p> 
+          <div> Current color turn : <span id="color">  </span> </div>
+          <p></p>
 	        <div id = "playerOnline"> Players present in room </div>
 	        <div id = "playerPlaying"> Player playing the game </div>
 
 		</div>
-	</div>
-</div>
-
+  </div>
+  
    <script type="text/javascript" src = "./lib/p5.min.js"> </script>
    <script type="text/javascript" src="./lib/socket.io.js"></script>
    <script type="text/javascript" src = "./js/client.js"> </script>
    <script type="text/javascript" scr = "./lib/materialize.js"></script>
+   <script src="./lib/sweetalert.min.js"></script>
 </body>
 </html>

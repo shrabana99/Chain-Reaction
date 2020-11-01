@@ -1,3 +1,4 @@
+p5.disableFriendlyErrors = true;
 const N_SIZE = 9,
 M_SIZE = 6,
 alongX = 70, //distance between 2 lines along X axis
@@ -5,14 +6,16 @@ alongY = 60, //distance between 2 lines along Y axis
 maxTurns = 4, // max allowed no of player
 dx = [-1, 0, 1, 0], // 4 directions
 dy = [ 0, 1, 0,-1],
-colors = [ "red", "blue", "green","yellow"];
-
+colors = ["green","blue","purple","red"];
 let c, // canvas
+lockOnClick,
 burstSound, // pop sound  
 currentTurn, // current player
 urTurn, // your turn as a player
 moveCount, // total no of moves
 turns, // no of player
+availableTotalPlayer = 0,
+playingTotalPlayer = 0,
 allJoined = false, // all player joined or not
 gameRunning, // game currently running or not
 validTurn, // array,  player in the game or not
@@ -21,14 +24,10 @@ boxes = [],
 ballCount, // 2d array to count the balls
 ballColor, // 2d array to store the Color of a cell
 pointerMap,//map cell index to canvas coordinate 
-unstableBalls; // this 3Darray will store ball objects and the directions they need to go when they are unstable
-
+unstableBalls, // this 3Darray will store ball objects and the directions they need to go when they are unstable
+checkUnstable; // 2d array true or false
 //////////////////////FRONTEND STARTS HERE/////////////////////////////////////////////////////////////
 
-function preload()
-{
-    //burstSound = loadSound("../sound/burstSound.mp3"); // Bad sound ;(
-}
 // to setup the board .. 
 function setup() 
 {
@@ -36,10 +35,15 @@ function setup()
 	 let board = select('#board');
 	 c = createCanvas(435,555,WEBGL);
 	 c.parent(board);
-
+	 c.mouseClicked(mClicked);
+     //noLoop();  
    pointerMapInit();
+   //start();
 }
-
+function start()
+{
+	requestAnimationFrame(redraw);
+}
 
 //this draw function is unique to p5.js .. It executes repeatedly.
 //So all drawing goes here..
@@ -67,6 +71,7 @@ function draw()
 	findUnstableCell();  
 	drawStatTable(); 	
 	//exclude();
+	//requestAnimationFrame(redraw);
 }
 function drawStatTable(){
 	for(let i = 0; i < turns; i++){
@@ -80,6 +85,7 @@ function drawStatTable(){
 			document.getElementById(i+"playing").innerHTML = "not playing";
 	}
 }
+
 function pointerMapInit()// used to initialize the pointerMap Variable.
 {
 	pointerMap = new Array(N_SIZE);
@@ -151,7 +157,7 @@ function drawGrid() //Draw grid
              if(idx == 1)
 			 stroke('white');
 			 else
-			 stroke('green');	
+			 stroke(''+colors[currentTurn]);	
 			 if(i != N_SIZE && j != M_SIZE){
 			   rect(j*alongX,i*alongY,alongX,alongY);
 			   rect(j*alongX+13,i*alongY+13,alongX-2,alongY-2);
@@ -195,9 +201,9 @@ function drawBall(x,y) //used to draw all balls called inside draw()
        vibrateX = random(-0.05,0.05);
        vibrateY = random(-0.1,0.1);
        translate(X+vibrateY-8,Y+vibrateY);
+	   rotateX(frameCount * factorX);
        rotateZ(frameCount * factorZ);
        rotateY(frameCount * factorY);
-	   rotateX(frameCount * factorX);
 	   sphere(14);
 	   translate(16,0);
 	   sphere(14);
@@ -296,6 +302,7 @@ function findUnstableCell() //to find all unstable cells and put the unstable ba
 		 {
 			  if(isUnstable(i,j))
 			  {
+				 checkUnstable[i][j] = true; 
 				 ballCount[i][j] = 0; 
 				 makeUnstableBalls(i,j);
 			  }
@@ -347,6 +354,7 @@ function drawUnstableBalls() //used to draw the temporary balls on grid
 					  let X = unstableBalls[x][y][z].newX;let Y = unstableBalls[x][y][z].newY;
 					  ballColor[X][Y] = unstableBalls[x][y][z].color;
 					  ballCount[X][Y]++;
+					  checkUnstable[x][y] = false;
 					  unstableBalls[x][y][z] = 0;
 					  
 				 }
@@ -379,11 +387,13 @@ function newGame() // to create a new game..
 
 	unstableBalls = new Array(N_SIZE);
     ballColor = new Array(N_SIZE);
-    ballCount = new Array(N_SIZE);
+	ballCount = new Array(N_SIZE);
+	checkUnstable = new Array(N_SIZE);
     for(var i = 0;i < N_SIZE;i++){
     	ballColor[i] = new Array(M_SIZE);
 	    ballCount[i] = new Array(M_SIZE);
-	    unstableBalls[i] = new Array(M_SIZE);
+		unstableBalls[i] = new Array(M_SIZE);
+		checkUnstable[i] = new Array(M_SIZE);
     }
     for(var i = 0;i < N_SIZE;i++)
      {
@@ -392,6 +402,7 @@ function newGame() // to create a new game..
          let cc = Math.floor(random(0,3.9));
          ballCount[i][j] = 0;
 		 ballColor[i][j] = colors[cc];
+		 checkUnstable[i][j] = false;
 		 unstableBalls[i][j] = new Array(4);
        }
 	 }
@@ -408,26 +419,41 @@ function newGame() // to create a new game..
 	 }
 }
 
-
+function checkUnstability()
+{
+	for(var i = 0;i < N_SIZE;i++)
+	{	
+		for(var j = 0;j < M_SIZE;j++)
+		{
+			if(checkUnstable[i][j])
+			return true;
+		}
+	}
+	return false;
+}
 
 //This is the mouse click event on canvas.
-function mouseClicked() // mouse click event handler 
+function mClicked() // mouse click event handler 
 {
 	var pos = mouseToCellIndex();
 	if(pos == undefined) return;
 
+	if(lockOnClick == true)
+	return;
 	if(allJoined == false) return;
-
+	if(urTurn != currentTurn) // if you are not the current player
+	  return;
+	if(checkUnstability())
+	  return;  
+	  
     let x = pos.cellX, y = pos.cellY; 
 
-    if(urTurn != currentTurn) // if you are not the current player
-      return;
-    if(ballCount[x][y] != 0 && ballColor[x][y] != colors[currentTurn]) // cell occupied by opponent
-      return;
-
-  	moveCount++;
+    if(ballCount[x][y]!= 0 && ballColor[x][y] != colors[currentTurn]) // cell occupied by opponent
+	  return;
+	lockOnClick =true;  
   	let res = x + " " + y;
-    socket.emit('curGame', res); //console.log(res, allJoined);
+	socket.emit('curGame', res); //console.log(res, allJoined);
+	return false;
 }
 
 // FRONTEND OF GRID ENDS HERE //////////////////////////////////////////////////////////////////////////////
@@ -445,8 +471,8 @@ function exclude(){
         if(count == 0) validTurn[t] = false;
     }
 }
-function winner(){
-    if(moveCount < 3) return;
+function winner(){ 
+    if(moveCount <= turns) return;
 
     exclude();
     let playerCount = 0, playerTurn = 0;
@@ -455,20 +481,37 @@ function winner(){
             playerTurn = t, playerCount++;
     }
     if(playerCount == 1){
-        tempAlert('Winner: Player ' + colors[playerTurn], 2000);
-        // initialiseGame(turns, true); // playing 2nd round with same set of friend
+        tempAlert(colors[playerTurn],colors[playerTurn],2000);
     } 
 }
-function tempAlert(msg,duration){
+
+let lockOnEndGame = false;
+function tempAlert(msg,color,duration){
+	if(lockOnEndGame == true) return;
+	lockOnEndGame = true;
+
+    swal({
+		title: "Woahh! Winner is "+msg+" !!",
+		text: "Regenerating Board...",
+		timer: duration,
+		buttons: false,
+	  })
     var el = document.createElement("div");
-    el.innerHTML = msg;
-    el.setAttribute("style",
-    "position:absolute;top:20%;left:20%;width:70%;height:70%;align:center;background-color:black;color:white");
+	el.setAttribute("class","tempAlert");
     setTimeout(function(){
-        el.parentNode.removeChild(el); initialiseGame(turns, true);
+		el.parentNode.removeChild(el);
+		initialiseGame(turns, false);
+
+		allJoined = false;// all tabs have to draw the whole gameplay
+	  	socket.emit('endGame', playingTotalPlayer+1, availableTotalPlayer);
+		
+		lockOnEndGame = false;
+
     },duration);
-    document.body.appendChild(el); 
+	document.body.appendChild(el); 
+
 }
+
 function updateTurn(){ // updates turn if some players disconnect or loose in the game
   if(validTurn[currentTurn] == false){
     for(let i = 1; i < turns; i++){
@@ -477,8 +520,17 @@ function updateTurn(){ // updates turn if some players disconnect or loose in th
         break;
     }
   }
-  document.getElementById('turn').innerHTML = currentTurn+1;
-  document.getElementById('color').innerHTML = colors[currentTurn];
+  let currPlayer = createPlayerIcon(colors[currentTurn]);
+  document.getElementById('color').innerHTML = colors[currentTurn]+currPlayer;
+}
+function createPlayerIcon(cl)
+{
+	let currPlayer = document.createElement('i');
+	currPlayer.classList.add('left');
+	currPlayer.classList.add('material-icons');
+	currPlayer.classList.add(cl);
+	currPlayer.innerText = "person_outline";
+	return currPlayer.outerHTML;
 }
 
 function createStatTable(totalPlayer){ // creates stat portion of the game
@@ -491,7 +543,7 @@ function createStatTable(totalPlayer){ // creates stat portion of the game
 
         let cell = document.createElement('td');
         cell.setAttribute('align', 'center');
-        cell.innerHTML = "" + colors[i];
+        cell.innerHTML = "" + colors[i]+createPlayerIcon(colors[i]);
         row.appendChild(cell);
 
         cell = document.createElement('td');
@@ -510,7 +562,7 @@ function createStatTable(totalPlayer){ // creates stat portion of the game
 
         let cell = document.createElement('td');
         cell.setAttribute('align', 'center');
-        cell.innerHTML = "" + colors[i];
+        cell.innerHTML = "" + colors[i]+createPlayerIcon(colors[i]);
         row.appendChild(cell);
 
         cell = document.createElement('td');
@@ -537,6 +589,7 @@ function initialiseGame(totalPlayer, allJoinedOrNot){ // initialising
 }
 
 function createGame(totalPlayer){
+	availableTotalPlayer = totalPlayer;
     createStatTable(totalPlayer); 
     initialiseGame(totalPlayer, false); 
 }
@@ -544,6 +597,7 @@ function createGame(totalPlayer){
 /*  client function starts  */
 // chat and (game+stat) functions
 const socket = io('https://chain-reaction-hub.herokuapp.com/');
+ //io('http://localhost:3000');
 
 //  chat functions      //
 const chatBox = document.getElementById('chatBox');
@@ -558,18 +612,25 @@ sendButton.addEventListener('click', function(){
 });
 
 socket.on('connected', function(player) {
-    addMessage(colors[player-1] + " connected");
+    addMessage(colors[player-1]," connected");
 });
 socket.on('disconnected', function(player) {
-    addMessage(colors[player-1] + " disconnected");
+    addMessage(colors[player-1]," disconnected");
 });
 socket.on('sentMsg', function(player, msg){
-    addMessage(colors[player-1] + " " + msg);
+    addMessage(colors[player-1],msg);
 });
-function addMessage(message) {
-    let msg = document.createElement('div');
-    msg.innerText = message;
-    chatBox.appendChild(msg);
+function addMessage(color,message) {
+	let msg = document.createElement('div');
+	let playerIcon = document.createElement('i');
+	playerIcon.classList.add('material-icons');
+	playerIcon.classList.add('left');
+	playerIcon.classList.add(color);
+	playerIcon.innerText = 'person_outline'; 
+	msg.innerHTML = playerIcon.outerHTML+message;
+	msg.style.paddingTop = '5px';
+	chatBox.appendChild(msg);
+	// chatBox.write('<p></p>');
 }
 // end of chat functions    //
 
@@ -580,19 +641,26 @@ socket.on('gameRun', updateForAll); // updates board for all player
 socket.on('playerLeft', handlePlayerLeft); // updates player left for all player
 socket.on('unknownCode', handleUnknownCode); // triggers for unknown room
 socket.on('roomFull', handleRoomFull); // triggers for full room
+socket.on('gameEnd', function(x){ // handles end of game changes
+	playingTotalPlayer = x;
+});
 
 function handleGameStatus(gameCode, gameTurn, totalPlayer){ 
-    document.getElementById('gameCodeDisplay').innerHTML = gameCode;
-    document.getElementById('gamePlayer').innerHTML = totalPlayer;
+    document.getElementById('gameCodeDisplay').innerHTML = 'Code: '+gameCode;
+    document.getElementById('gamePlayer').innerHTML = totalPlayer+" players";
 
-    urTurn = gameTurn-1;
-    document.getElementById('yourTurn').innerHTML = urTurn+1;
-    document.getElementById('yourColor').innerHTML = colors[urTurn];
+	urTurn = gameTurn-1;
+	let curr = createPlayerIcon(colors[urTurn]);
+    document.getElementById('yourColor').innerHTML = ""+colors[urTurn]+curr;
 
     visible();
     createGame(totalPlayer);
 }
-function handleAllJoined() { allJoined = true;  }
+function handleAllJoined() { 
+	allJoined = true; 
+	playingTotalPlayer = 0;
+	// initialiseGame(turns, allJoined);
+ }
 
 function updateForAll(cell_id){ 
     let x = Number(cell_id[0]);
@@ -603,18 +671,20 @@ function updateForAll(cell_id){
     //popChain();
     // update current players turn
     currentTurn = (currentTurn + 1)%turns;
-    updateTurn(); // 
+	updateTurn();
+	lockOnClick = false; 
 }
 function handlePlayerLeft(x){ 
+	availableTotalPlayer--;
     validPlayer[x-1] = false;
     validTurn[x-1] = false;
     updateTurn(); 
 }
 function handleUnknownCode() {
-    hide(); alert('Unknown Game Code');
+    hide(); swal('Unknown game code !');
 }
 function handleRoomFull() {
-    hide(); alert('This game is already in progress');
+    hide(); swal('This game is already in progress');
 }
 
 /*  helper function/hide+show screen   */ 
@@ -625,11 +695,14 @@ const gameCodeInput = document.getElementById('gameCodeInput');
 function hide() {
     initialScreen.style.display = "block";
     gameScreen.style.display = "none";
-    gameCodeInput.value = "";
+	gameCodeInput.value = "";
 }
 function visible(){
     initialScreen.style.display = "none";
-    gameScreen.style.display = "block";
+	gameScreen.style.display = "block";
+	bubbleWrap.style.display = "none";
+	document.body.style.background = "black";
+	document.body.style.overflow = "scroll";
 }
 /*    end of client functions      */
 
@@ -639,10 +712,29 @@ const joinGameBtn = document.getElementById('joinGameButton');
 const gamePlayerInput = document.getElementById('gamePlayerInput');
 
 newGameBtn.addEventListener('click', function () { // creates new game room
-    let playerNo = gamePlayerInput.value;
-    socket.emit('newGame', playerNo);
+	let playerNo = gamePlayerInput.value;
+	if(playerNo == '2' || playerNo == '3' || playerNo == '4'){
+	socket.emit('newGame', playerNo);
+	swal({
+		title: "Lets Play !",
+		text: "Generating board...\n\nCreating atoms...",
+		timer: 2000,
+		buttons: false 
+	});
+	}
+	else
+	{
+		swal("Number of playes should be from 2 to 4");
+	}
 });
 joinGameBtn.addEventListener('click', function () { // join into a game room
     const code = gameCodeInput.value;
-    socket.emit('joinGame', code);
+	socket.emit('joinGame', code);
+	swal({
+		title: "Lets Play !",
+		text: "Generating board...\n\nCreating atoms...",
+		timer: 2000,
+		buttons: false 
+	});
 });
+////////////////////////////////////////////////////initial screen anime

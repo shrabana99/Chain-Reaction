@@ -1,8 +1,3 @@
-.row > div{
-    background-color: #5cdb95;
-    border: 1px solid black;
-}
-
 .row{
     width: 100%;
     height: 100%;
@@ -14,7 +9,22 @@
 }
 .nav-wrapper{
     margin: 0px;
-    height: 50px;
+    height: 60px;
+    background-color: black;
+    text-decoration: linear-gradient(315deg, #63d471 0%, #233329 74%);
+}
+
+.tempAlert{
+    position: absolute;
+    top:0px;
+    left:0px;
+    height: 120%;
+    width: 100%;
+    text-align: center;
+    vertical-align: center;
+    color: blanchedalmond;
+    background: black;
+    z-index: 2;
 }
 
 #board{
@@ -23,13 +33,590 @@
     align-items: center;
     background-color: black;
 }
-html,body
+#chat{
+    background: linear-gradient(100deg,limegreen,cyan);
+    border-top-right-radius: 30px;
+    border-bottom-right-radius: 30px;
+}
+#chatBox{
+    display: inherit;
+    height: 300px;
+    overflow-y: scroll;
+    scrollbar-color: teal transparent;
+    scrollbar-width: 7px;
+}
+#message::placeholder{
+    color: black;
+}
+#status
+{
+    background: linear-gradient(-100deg,limegreen,cyan);
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
+}
+#gameScreen {
+    display: none;
+}
+#foot{
+    background: black;
+    color: white;
+}
+#initialScreen {
+    background-color: #000000;
+    color: white;
+    position: relative;
+    align-items: center;
+    justify-items: center;
+    border-radius: 30px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+
+}
+#createGame{
+        
+    padding-bottom: 60px;
+}
+
+
+body
 {
     margin: 0px;
     padding: 0px;
     height: 100%;
     width: 100%;
-    background-color: black;
+    background: linear-gradient(-175deg,limegreen,cyan);
     justify-content: center;
     position: relative;
+    overflow: hidden;
 }
+
+html
+{
+    margin: 0px;
+    padding: 0px;
+    height: 100%;
+    width: 100%;
+    background: black;
+    justify-content: center;
+    position: relative;
+    scrollbar-color: teal transparent;
+    scrollbar-width: 7px;
+}
+
+
+
+
+html::-webkit-scrollbar-track
+{
+	border-radius: 10px;
+	background-color: #000;
+}
+
+html::-webkit-scrollbar
+{
+	width: 7px;
+    background-color:blue;
+    border-radius: 10px;
+}
+
+html::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	background-color:teal;
+}
+
+#chatBox::-webkit-scrollbar-track
+{
+	border-radius: 10px;
+	background-color: cyan;
+}
+
+#chatBox::-webkit-scrollbar
+{
+	width: 10px;
+  background-color:limegreen;
+}
+
+#chatBox::-webkit-scrollbar-thumb
+{
+	border-radius: 10px;
+	background-color:teal;
+}
+
+
+@keyframes move {
+
+    60%{
+        transform: translate3d(0, 0, -1200px);  
+    }
+    
+  }
+
+
+
+.bubble-wrap {
+    margin: 0 auto;
+    width: 500px;
+    height: 500px;
+    transform-style: preserve-3d;
+    transform-origin: center center;
+    perspective: 700px;
+  }
+  .bubble {
+    position: absolute;
+    opacity: 1;
+    border-radius: 50%;
+    animation: move 8s infinite;
+  }
+  .bubble:nth-child(1) {
+    height: 11px;
+    width: 11px;
+    animation-delay: 0.8s;
+    transform: translate3d(748px, 638px, 1205px);
+    background: #000000;
+  }
+  .bubble:nth-child(2) {
+    height: 30px;
+    width: 30px;
+    animation-delay: 1s;
+    transform: translate3d(440px, 391px, 1541px);
+    background: black;
+  }
+  .bubble:nth-child(3) {
+    height: 20px;
+    width: 20px;
+    animation-delay: 1s;
+    transform: translate3d(928px, 256px, 154px);
+    background: black;
+  }
+  .bubble:nth-child(4) {
+    height: 20px;
+    width: 20px;
+    animation-delay: 1s;
+    transform: translate3d(99px, 553px, 95px);
+    background: black;
+  }
+  .bubble:nth-child(5) {
+    height: 12px;
+    width: 12px;
+    animation-delay: 1s;
+    transform: translate3d(494px, 531px, 292px);
+    background: black;
+  }
+  .bubble:nth-child(6) {
+    height: 27px;
+    width: 27px;
+    animation-delay: 1s;
+    transform: translate3d(607px, 758px, 547px);
+    background: black;
+  }
+  .bubble:nth-child(7) {
+    height: 28px;
+    width: 28px;
+    animation-delay: 1s;
+    transform: translate3d(589px, 162px, 406px);
+    background: black;
+  }
+  .bubble:nth-child(8) {
+    height: 19px;
+    width: 19px;
+    animation-delay: 1s;
+    transform: translate3d(641px, 62px, 859px);
+    background: black;
+  }
+  .bubble:nth-child(9) {
+    height: 19px;
+    width: 19px;
+    animation-delay: 1s;
+    transform: translate3d(664px, 587px, 807px);
+    background: black;
+  }
+  .bubble:nth-child(10) {
+    height: 26px;
+    width: 26px;
+    animation-delay: 1s;
+    transform: translate3d(381px, 723px, 1190px);
+    background: black;
+  }
+  .bubble:nth-child(11) {
+    height: 11px;
+    width: 11px;
+    animation-delay: 0.4s;
+    transform: translate3d(941px, 751px, 1069px);
+    background: black;
+  }
+  .bubble:nth-child(12) {
+    height: 18px;
+    width: 18px;
+    animation-delay: 0.7s;
+    transform: translate3d(520px, 332px, 295px);
+    background: black;
+  }
+  .bubble:nth-child(13) {
+    height: 14px;
+    width: 14px;
+    animation-delay: 0.6s;
+    transform: translate3d(850px, 400px, 288px);
+    background: black;
+  }
+  .bubble:nth-child(14) {
+    height: 30px;
+    width: 30px;
+    animation-delay: 1s;
+    transform: translate3d(596px, 817px, 1064px);
+    background: black;
+  }
+  .bubble:nth-child(15) {
+    height: 15px;
+    width: 15px;
+    animation-delay: 0.5s;
+    transform: translate3d(246px, 214px, 361px);
+    background: black;
+  }
+  .bubble:nth-child(16) {
+    height: 17px;
+    width: 17px;
+    animation-delay: 0.8s;
+    transform: translate3d(33px, 921px, 907px);
+    background: black;
+  }
+  .bubble:nth-child(17) {
+    height: 20px;
+    width: 20px;
+    animation-delay: 1s;
+    transform: translate3d(606px, 233px, 207px);
+    background: black;
+  }
+  .bubble:nth-child(18) {
+    height: 12px;
+    width: 12px;
+    animation-delay: 0.7s;
+    transform: translate3d(973px, 711px, 1017px);
+    background: black;
+  }
+  .bubble:nth-child(19) {
+    height: 19px;
+    width: 19px;
+    animation-delay: 0.8s;
+    transform: translate3d(293px, 924px, 561px);
+    background: black;
+  }
+  .bubble:nth-child(20) {
+    height: 15px;
+    width: 15px;
+    animation-delay: 0.7s;
+    transform: translate3d(622px, 376px, 472px);
+    background: black;
+  }
+  .bubble:nth-child(21) {
+    height: 20px;
+    width: 20px;
+    animation-delay: 1s;
+    transform: translate3d(376px, 648px, 920px);
+    background: black;
+  }
+  .bubble:nth-child(22) {
+    height: 10px;
+    width: 10px;
+    animation-delay: 1s;
+    transform: translate3d(323px, 275px, 722px);
+    background: black;
+  }
+  .bubble:nth-child(23) {
+    height: 24px;
+    width: 24px;
+    animation-delay: 0.8s;
+    transform: translate3d(142px, 650px, 608px);
+    background: black;
+  }
+  .bubble:nth-child(24) {
+    height: 20px;
+    width: 20px;
+    animation-delay: 0.5s;
+    transform: translate3d(704px, 177px, 1084px);
+    background: black;
+  }
+  .bubble:nth-child(25) {
+    height: 16px;
+    width: 16px;
+    animation-delay: 0.8s;
+    transform: translate3d(854px, 362px, 86px);
+    background: black;
+  }
+  .bubble:nth-child(26) {
+    height: 15px;
+    width: 15px;
+    animation-delay: 0.8s;
+    transform: translate3d(224px, 975px, 348px);
+    background: black;
+  }
+  .bubble:nth-child(27) {
+    height: 13px;
+    width: 13px;
+    animation-delay: 0.8s;
+    transform: translate3d(517px, 156px, 488px);
+    background: black;
+  }
+  .bubble:nth-child(28) {
+    height: 8px;
+    width: 8px;
+    animation-delay: 0.8s;
+    transform: translate3d(517px, 119px, 808px);
+    background: black;
+  }
+  .bubble:nth-child(29) {
+    height: 12px;
+    width: 12px;
+    animation-delay: 1s;
+    transform: translate3d(979px, 119px, 1106px);
+    background: black;
+  }
+  .bubble:nth-child(30) {
+    height: 17px;
+    width: 17px;
+    animation-delay: 1s;
+    transform: translate3d(157px, 138px, 510px);
+    background: black;
+  }
+  .bubble:nth-child(31) {
+    height: 22px;
+    width: 22px;
+    animation-delay: 1s;
+    transform: translate3d(205px, 1111px, 1161px);
+    background: black;
+  }
+  .bubble:nth-child(32) {
+    height: 18px;
+    width: 18px;
+    animation-delay: 0.5s;
+    transform: translate3d(745px, 793px, 30px);
+    background: black;
+  }
+  .bubble:nth-child(33) {
+    height: 17px;
+    width: 17px;
+    animation-delay: 0.7s;
+    transform: translate3d(979px, 55px, 300px);
+    background: black;
+  }
+  .bubble:nth-child(34) {
+    height: 11px;
+    width: 11px;
+    animation-delay: 1s;
+    transform: translate3d(340px, 294px, 110px);
+    background: black;
+  }
+  .bubble:nth-child(35) {
+    height: 20px;
+    width: 20px;
+    animation-delay: 0.7s;
+    transform: translate3d(232px, 603px, 184px);
+    background: black;
+  }
+  .bubble:nth-child(36) {
+    height: 17px;
+    width: 17px;
+    animation-delay: 1s;
+    transform: translate3d(364px, 588px, 891px);
+    background: black;
+  }
+  .bubble:nth-child(37) {
+    height: 26px;
+    width: 26px;
+    animation-delay: 0.7s;
+    transform: translate3d(821px, 501px, 148px);
+    background: black;
+  }
+  .bubble:nth-child(38) {
+    height: 24px;
+    width: 24px;
+    animation-delay: 0.6s;
+    transform: translate3d(289px, 830px, 328px);
+    background: black;
+  }
+  .bubble:nth-child(39) {
+    height: 16px;
+    width: 16px;
+    animation-delay: 0.8s;
+    transform: translate3d(977px, 113px, 102px);
+    background: black;
+  }
+  .bubble:nth-child(40) {
+    height: 11px;
+    width: 11px;
+    animation-delay: 0.7s;
+    transform: translate3d(157px, 846px, 145px);
+    background: black;
+  }
+  .bubble:nth-child(41) {
+    height: 19px;
+    width: 19px;
+    animation-delay: 0.8s;
+    transform: translate3d(92px, 523px, 995px);
+    background: black;
+  }
+  .bubble:nth-child(42) {
+    height: 20px;
+    width: 20px;
+    animation-delay: 1s;
+    transform: translate3d(646px, 256px, 170px);
+    background: black;
+  }
+  .bubble:nth-child(43) {
+    height: 21px;
+    width: 21px;
+    animation-delay: 0.6s;
+    transform: translate3d(23px, 638px, 106px);
+    background: black;
+  }
+  .bubble:nth-child(44) {
+    height: 10px;
+    width: 10px;
+    animation-delay: 0.7s;
+    transform: translate3d(553px, 264px, 102px);
+    background: black;
+  }
+  .bubble:nth-child(45) {
+    height: 18px;
+    width: 18px;
+    animation-delay: 0.9s;
+    transform: translate3d(568px, 118px, 247px);
+    background: black;
+  }
+  .bubble:nth-child(46) {
+    height: 16px;
+    width: 16px;
+    animation-delay: 0.6s;
+    transform: translate3d(665px, 95px, 813px);
+    background: black;
+  }
+  .bubble:nth-child(47) {
+    height: 19px;
+    width: 19px;
+    animation-delay: 0.7s;
+    transform: translate3d(382px, 274px, 689px);
+    background: black;
+  }
+  .bubble:nth-child(48) {
+    height: 22px;
+    width: 22px;
+    animation-delay: 1s;
+    transform: translate3d(877px, 978px, 696px);
+    background: black;
+  }
+  .bubble:nth-child(49) {
+    height: 13px;
+    width: 13px;
+    animation-delay: 1.1s;
+    transform: translate3d(939px, 690px, 553px);
+    background: black;
+  }
+  .bubble:nth-child(50) {
+    height: 23px;
+    width: 23px;
+    animation-delay: 1s;
+    transform: translate3d(749px, 23px, 36px);
+    background: black;
+  }
+  .bubble:nth-child(51) {
+    height: 16px;
+    width: 16px;
+    animation-delay: 1s;
+    transform: translate3d(986px, 86px, 1032px);
+    background: black;
+  }
+  .bubble:nth-child(52) {
+    height: 18px;
+    width: 18px;
+    animation-delay: 1s;
+    transform: translate3d(753px, 670px, 1124px);
+    background: black;
+  }
+  .bubble:nth-child(53) {
+    height: 28px;
+    width: 28px;
+    animation-delay: 1s;
+    transform: translate3d(378px, 22px, 1267px);
+    background: black;
+  }
+  .bubble:nth-child(54) {
+    height: 12px;
+    width: 12px;
+    animation-delay: 1s;
+    transform: translate3d(738px, 437px, 1010px);
+    background: black;  
+  }
+  .bubble:nth-child(55) {
+    height: 24px;
+    width: 24px;
+    animation-delay: 1s;
+    transform: translate3d(704px, 71px, 912px);
+    background: black;
+  }
+  .bubble:nth-child(56) {
+    height: 16px;
+    width: 16px;
+    animation-delay: 1s;
+    transform: translate3d(365px, 661px, 369px);
+    background: black;
+  }
+  .bubble:nth-child(57) {
+    height: 28px;
+    width: 28px;
+    animation-delay: 0.6s;
+    transform: translate3d(619px, 793px, 582px);
+    background: black;
+  }
+  .bubble:nth-child(58) {
+    height: 27px;
+    width: 27px;
+    animation-delay: 1s;
+    transform: translate3d(987px, 200px, 724px);
+    background: black;
+  }
+  .bubble:nth-child(59) {
+    height: 24px;
+    width: 24px;
+    animation-delay: 1s;
+    transform: translate3d(209px, 879px, 1384px);
+    background: black;
+  }
+  .bubble:nth-child(60) {
+    height: 13px;
+    width: 13px;
+    animation-delay: 1s;
+    transform: translate3d(711px, 820px, 1454px);
+    background: black;
+  }
+  .bubble:nth-child(61) {
+    height: 24px;
+    width: 24px;
+    animation-delay: 0.6s;
+    transform: translate3d(173px, 931px, 1055px);
+    background: black;
+  }
+  .bubble:nth-child(62) {
+    height: 12px;
+    width: 12px;
+    animation-delay: 0.5s;
+    transform: translate3d(310px, 601px, 563px);
+    background: black;
+  }
+  .bubble:nth-child(63) {
+    height: 20px;
+    width: 20px;
+    animation-delay: 0.6s;
+    transform: translate3d(709px, 19px, 454px);
+    background: black;
+  }
+  .bubble:nth-child(64) {
+    height: 17px;
+    width: 17px;
+    animation-delay: 0.4s;
+    transform: translate3d(230px, 530px, 410px);
+    background: black;
+  }
+  
+  

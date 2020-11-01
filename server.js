@@ -1,8 +1,4 @@
-
-const express = require("express");
-const app = express();
-
-const io = require('socket.io')(process.env.PORT);
+const io = require('socket.io')(3000)
 
 function makeid(length) {
     let result           = '';
@@ -24,6 +20,14 @@ io.on('connection', client => {
   client.on('joinGame', handleJoinGame);
   client.on('curGame', handleCurrentGame);
   client.on('sendMessage', handleMsg);
+  client.on('endGame', function(x, y){ 
+      // console.log(x, y);
+      let roomName = clientRooms[client.id];
+      io.in(roomName).emit('gameEnd', x);
+      if(x == y){
+          io.in(roomName).emit('lastJoined');
+      }
+  });
 
   function handleMsg(msg){
     let roomName = clientRooms[client.id];
@@ -31,7 +35,7 @@ io.on('connection', client => {
   }
 
   function handleNewGame(totalPlayer) {
-    let roomName = makeid(5); 
+    let roomName = makeid(5);  //console.log(roomName);
     client.number = 1; 
 
     clientRooms[client.id] = roomName;
@@ -81,7 +85,6 @@ io.on('connection', client => {
 
     if(lastPlayer[roomName] == playersInRoom[roomName])
         io.in(roomName).emit('lastJoined');
-    
   }
 
   function handleCurrentGame(cell_id) {
@@ -116,5 +119,3 @@ io.on('connection', client => {
   });
 
 });
-
-
