@@ -747,4 +747,11 @@ joinGameBtn.addEventListener('click', function () { // join into a game room
 		buttons: false 
 	});
 });
+window.addEventListener('offline', function(event){
+    swal({
+		title: "Oops !",
+		text: "You are offline", 
+	});
+});
+
 ////////////////////////////////////////////////////initial screen anime
